@@ -87,7 +87,7 @@ def main():
                     length_function=count_tokens
                     )
 
-                splitted_documents = text_splitter.split_documents(pages)
+                splitted_documents = text_splitter.split_documents(pdf)
 
                 embeddings_model = OpenAIEmbeddings(model='text-embedding-3-small')
                 db = Chroma.from_documents(splitted_documents, embeddings_model, persist_directory="./chroma_db")
