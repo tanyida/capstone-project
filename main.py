@@ -79,7 +79,7 @@ def main():
 
                 prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
 
-                embeddings_model = OpenAIEmbeddings(model='text-embedding-3-small')
+                embeddings_model = OpenAIEmbeddings(model='text-embedding-ada-002')
                 db = Chroma.from_documents(chunks, embeddings_model)
 
                 chain = RetrievalQA.from_chain_type(
