@@ -1,22 +1,16 @@
 from dotenv import load_dotenv
 import streamlit as st
-import time
 from PyPDF2 import PdfReader
-from streamlit_extras.add_vertical_space import add_vertical_space
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_community.callbacks import get_openai_callback
 from helper_functions.utility import check_password
-from langchain.chains import StuffDocumentsChain
+from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
-from langchain.chains import RetrievalQA
-from langchain_community.document_loaders import TextLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 import tiktoken
-from langchain_community.document_loaders import PyPDFLoader
 
 # Check if the password is correct.  
 if not check_password():  
@@ -26,7 +20,6 @@ if not check_password():
 with st.sidebar:
     st.title('WSHO Assessment Assistant!')
 
-
 def count_tokens(text):
     encoding = tiktoken.encoding_for_model('gpt-3.5-turbo')
     return len(encoding.encode(text))
@@ -34,38 +27,39 @@ def count_tokens(text):
 def main():
     load_dotenv()
 
-    #Main Content
-    st.header("Assessment assistant for Workplace Safety and Health Officer (WSHO) Applicants")
+    # Main Content
+    st.header("Assessment Assistant for Workplace Safety and Health Officer (WSHO) Applicants")
 
-    # upload file
+    # Upload file
     pdf = st.file_uploader("Upload the document for WSH regulations and input the applicants' responses.", type="pdf")
 
-    # extract the text
+    # Extract the text
     if pdf is not None:
-      pdf_reader = PdfReader(pdf)
-      text = ""
-      for page in pdf_reader.pages:
-        text += page.extract_text()
-        
-      # split into chunks
-      text_splitter = CharacterTextSplitter(
-        separator="\n",
-        chunk_size=1000,
-        chunk_overlap=200,
-        length_function=len
-      )
-      chunks = text_splitter.split_text(text)
-      
-      # create embeddings
-      embeddings = OpenAIEmbeddings()
-      knowledge_base = FAISS.from_texts(chunks, embeddings)
-      
-      # show user input
-      with st.chat_message("user"):
-        st.write("Document uploaded successfuly!")
+        pdf_reader = PdfReader(pdf)  # Directly reading the PDF file
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text()  # Extract text from each page and concatenate
 
-      user_question = st.text_area("Please input your response or question about the uploaded file below:")
-      if st.button("Submit"):
+        # Split text into chunks
+        text_splitter = CharacterTextSplitter(
+            separator="\n",
+            chunk_size=1000,
+            chunk_overlap=200,
+            length_function=len
+        )
+        chunks = text_splitter.split_text(text)  # Split text into manageable chunks
+
+        # Create embeddings
+        embeddings = OpenAIEmbeddings()
+        knowledge_base = FAISS.from_texts(chunks, embeddings)
+
+        # Show user input
+        with st.chat_message("user"):
+            st.write("Document uploaded successfully!")
+
+        # User input for questions or responses
+        user_question = st.text_area("Please input your response or question about the uploaded file below:")
+        if st.button("Submit"):
             if user_question:
                 # Validate user's response with the document details
                 docs = knowledge_base.similarity_search(user_question)
@@ -79,18 +73,21 @@ def main():
 
                 prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
 
+                # Use the embeddings model to create a Chroma database
                 embeddings_model = OpenAIEmbeddings(model='text-embedding-ada-002')
-                db = Chroma.from_documents(chunks, embeddings_model)
+                db = Chroma.from_texts(chunks, embeddings_model)
 
+                # Set up the RetrievalQA chain
                 chain = RetrievalQA.from_chain_type(
                     ChatOpenAI(model='gpt-3.5-turbo'),
                     retriever=db.as_retriever(),
-                    return_source_documents=True, # Make inspection of document possible
-                    chain_type_kwargs={"prompt": prompt_template})
+                    return_source_documents=True,  # Make inspection of document possible
+                    chain_type_kwargs={"prompt": prompt_template}
+                )
 
-                # Use 'invoke instead of 'run'
+                # Use 'invoke' instead of 'run'
                 response = chain.invoke({"input_documents": docs, "question": user_question})
-            
+
                 st.write(response)
 
 if __name__ == '__main__':
