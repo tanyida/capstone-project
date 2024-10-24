@@ -6,10 +6,10 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain.chains.question_answering import load_qa_chain
 from langchain_community.callbacks import get_openai_callback
 from helper_functions.utility import check_password
 from langchain.chains import StuffDocumentsChain
+from langchain.prompts import PromptTemplate
 from langchain_openai import OpenAI
 
 # Check if the password is correct.  
@@ -60,8 +60,17 @@ def main():
                 # Validate user's response with the document details
                 docs = knowledge_base.similarity_search(user_question)
 
+                # Define a custom prompt to validate user responses
+                custom_prompt = """
+                You are a safety regulations expert. Please validate the following response based on the given documents.
+                Check if the user's response is correct and identify any details missing from the user's response.
+                Response: {question}
+                """
+
+                prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
+                
                 llm = OpenAI()
-                chain = StuffDocumentsChain(llm=llm)
+                chain = StuffDocumentsChain(llm=llm, prompt=prompt_template)
 
                 # Use 'invoke instead of 'run'
                 response = chain.invoke({"input_documents": docs, "question": user_question})
