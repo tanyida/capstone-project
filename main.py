@@ -13,13 +13,13 @@ from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import TextLoader
-from langchain_text_splitters import CharacterTextSplitter
+from langchain_text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 
 # Check if the password is correct.  
 if not check_password():  
     st.stop()
-    
+
 # Sidebar contents
 with st.sidebar:
     st.title('WSHO Assessment Assistant!')
@@ -73,7 +73,17 @@ def main():
 
                 prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
 
-# Load the document, split it into chunks, embed each chunk and load it into the vector store.
+                # Load the document, split it into chunks, embed each chunk and load it into the vector store.
+                text_splitter = RecursiveCharacterTextSplitter(
+                    separators=["\n\n", "\n", " ", ""],
+                    chunk_size=500,
+                    chunk_overlap=50,
+                    length_function=count_tokens
+                    )
+
+                splitted_documents = text_splitter.split_documents(pages)
+
+                embeddings_model = OpenAIEmbeddings(model='text-embedding-3-small')
                 db = Chroma.from_documents(splitted_documents, embeddings_model, persist_directory="./chroma_db")
                 chain = RetrievalQA.from_chain_type(
                     ChatOpenAI(model='gpt-3.5-turbo'),
