@@ -10,7 +10,7 @@ from langchain_community.callbacks import get_openai_callback
 from helper_functions.utility import check_password
 from langchain.chains import StuffDocumentsChain
 from langchain.prompts import PromptTemplate
-from langchain_openai import OpenAI
+from langchain_openai import ChatOpenAI
 
 # Check if the password is correct.  
 if not check_password():  
@@ -69,8 +69,12 @@ def main():
 
                 prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
                 
-                llm = OpenAI()
-                chain = StuffDocumentsChain(llm=llm, prompt=prompt_template)
+#               llm = ChatOpenAI()
+                chain = RetrievalQA.from_chain_type(
+                    ChatOpenAI(model='gpt-3.5-turbo'),
+                    retriever=db.as_retriever(),
+                    return_source_documents=True, # Make inspection of document possible
+                    chain_type_kwargs={"prompt": prompt_template}
 
                 # Use 'invoke instead of 'run'
                 response = chain.invoke({"input_documents": docs, "question": user_question})
