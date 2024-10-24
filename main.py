@@ -51,17 +51,24 @@ def main():
       # show user input
       with st.chat_message("user"):
         st.write("Document uploaded successfuly!")
-      user_question = st.text_input("Please ask a question about your uploaded file below:")
-      if user_question:
-        docs = knowledge_base.similarity_search(user_question)
-        
-        llm = OpenAI()
-        chain = load_qa_chain(llm, chain_type="stuff")
-        with get_openai_callback() as cb:
-          response = chain.run(input_documents=docs, question=user_question)
-          print(cb)
-           
-        st.write(response)
+
+    
+      user_question = st.text_area("Please input your response or question about the uploaded file below:")
+      if st.button("Submit"):
+            if user_question:
+                # Validate user's response with the document details
+                docs = knowledge_base.similarity_search(user_question)
+
+                # Modify the prompt to not only check but also validate any missing details
+                llm = OpenAI()
+                chain = load_qa_chain(llm, chain_type="stuff")
+                validation_prompt = (
+                    f"Check if the user's response is correct based on the document, and identify if there are any "
+                    f"details missing from the user's response. Response: '{user_question}'"
+                )
+                with get_openai_callback() as cb:
+                    response = chain.run(input_documents=docs, question=validation_prompt)
+                    print(cb)
 
 if __name__ == '__main__':
     main()
