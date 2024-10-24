@@ -16,7 +16,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 import tiktoken
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 
 # Check if the password is correct.  
 if not check_password():  
@@ -39,8 +39,6 @@ def main():
 
     # upload file
     pdf = st.file_uploader("Upload the document for WSH regulations and input the applicants' responses.", type="pdf")
-    
-    pages = pdf.load()
 
     # extract the text
     if pdf is not None:
@@ -66,7 +64,6 @@ def main():
       with st.chat_message("user"):
         st.write("Document uploaded successfuly!")
 
-    
       user_question = st.text_area("Please input your response or question about the uploaded file below:")
       if st.button("Submit"):
             if user_question:
@@ -82,18 +79,9 @@ def main():
 
                 prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
 
-                # Load the document, split it into chunks, embed each chunk and load it into the vector store.
-                text_splitter = RecursiveCharacterTextSplitter(
-                    separators=["\n\n", "\n", " ", ""],
-                    chunk_size=500,
-                    chunk_overlap=50,
-                    length_function=count_tokens
-                    )
-
-                splitted_documents = text_splitter.split_documents(pages)
-
                 embeddings_model = OpenAIEmbeddings(model='text-embedding-3-small')
-                db = Chroma.from_documents(splitted_documents, embeddings_model, persist_directory="./chroma_db")
+                db = Chroma.from_documents(chunks, embeddings_model)
+
                 chain = RetrievalQA.from_chain_type(
                     ChatOpenAI(model='gpt-3.5-turbo'),
                     retriever=db.as_retriever(),
