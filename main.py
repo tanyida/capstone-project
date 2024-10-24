@@ -78,13 +78,13 @@ def main():
                 prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
 
                 # Use the embeddings model to create a Chroma database
-                embeddings_model = OpenAIEmbeddings(model='text-embedding-ada-002')
-                db = Chroma.from_texts(chunks, embeddings_model)
+                #embeddings_model = OpenAIEmbeddings(model='text-embedding-ada-002')
+                #db = Chroma.from_texts(chunks, embeddings_model)
 
                 # Set up the RetrievalQA chain
                 chain = RetrievalQA.from_chain_type(
                     ChatOpenAI(model='gpt-3.5-turbo'),
-                    retriever=db.as_retriever(),
+                    retriever=knowledge_base.as_retriever(),
                     return_source_documents=True,  # Make inspection of document possible
                     chain_type_kwargs={"prompt": prompt_template}
                 )
