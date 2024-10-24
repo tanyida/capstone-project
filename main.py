@@ -11,7 +11,7 @@ from helper_functions.utility import check_password
 from langchain.chains import StuffDocumentsChain
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
-from langchian.chains import RetrievalQA
+from langchain.chains import RetrievalQA
 
 # Check if the password is correct.  
 if not check_password():  
