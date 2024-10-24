@@ -86,7 +86,7 @@ def main():
                     ChatOpenAI(model='gpt-3.5-turbo'),
                     retriever=knowledge_base.as_retriever(),
                     return_source_documents=True,  # Make inspection of document possible
-                    chain_type_kwargs={"prompt": prompt_template}
+                    chain_type_kwargs={"prompt": prompt_template, "document_variable_name": "documents"}
                 )
 
                 # Use 'invoke' instead of 'run'
