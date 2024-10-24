@@ -12,6 +12,9 @@ from langchain.chains import StuffDocumentsChain
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
+from langchain_community.document_loaders import TextLoader
+from langchain_text_splitters import CharacterTextSplitter
+from langchain_community.vectorstores import Chroma
 
 # Check if the password is correct.  
 if not check_password():  
@@ -69,8 +72,9 @@ def main():
                 """
 
                 prompt_template = PromptTemplate(template=custom_prompt, input_variables=["question"])
-                
-#               llm = ChatOpenAI()
+
+# Load the document, split it into chunks, embed each chunk and load it into the vector store.
+                db = Chroma.from_documents(splitted_documents, embeddings_model, persist_directory="./chroma_db")
                 chain = RetrievalQA.from_chain_type(
                     ChatOpenAI(model='gpt-3.5-turbo'),
                     retriever=db.as_retriever(),
