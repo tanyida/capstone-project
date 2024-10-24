@@ -9,7 +9,8 @@ from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
-from helper_functions.utility import check_password  
+from helper_functions.utility import check_password
+from langchain_openai import OpenAI
 
 # Check if the password is correct.  
 if not check_password():  
