@@ -4,12 +4,13 @@ import time
 from PyPDF2 import PdfReader
 from streamlit_extras.add_vertical_space import add_vertical_space
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain_community.callbacks import get_openai_callback
 from helper_functions.utility import check_password
-from langchain_community.llms import OpenAI
+from langchain.chains import StuffDocumentsChain
+from langchain_openai import OpenAI
 
 # Check if the password is correct.  
 if not check_password():  
@@ -59,16 +60,13 @@ def main():
                 # Validate user's response with the document details
                 docs = knowledge_base.similarity_search(user_question)
 
-                # Modify the prompt to not only check but also validate any missing details
                 llm = OpenAI()
-                chain = load_qa_chain(llm, chain_type="stuff")
-                validation_prompt = (
-                    f"Check if the user's response is correct based on the document, and identify if there are any "
-                    f"details missing from the user's response. Response: '{user_question}'"
-                )
-                with get_openai_callback() as cb:
-                    response = chain.run(input_documents=docs, question=validation_prompt)
-                    print(cb)
+                chain = StuffDocumentsChain(llm=llm)
+
+                # Use 'invoke instead of 'run'
+                response = chain.invoke({"input_documents": docs, "question": user_question})
+            
+                st.write(response)
 
 if __name__ == '__main__':
     main()
