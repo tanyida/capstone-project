@@ -5,12 +5,11 @@ from PyPDF2 import PdfReader
 from streamlit_extras.add_vertical_space import add_vertical_space
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
-from langchain.llms import OpenAI
-from langchain.callbacks import get_openai_callback
+from langchain_community.callbacks import get_openai_callback
 from helper_functions.utility import check_password
-from langchain_openai import OpenAI
+from langchain_community.llms import OpenAI
 
 # Check if the password is correct.  
 if not check_password():  
