@@ -16,6 +16,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 import tiktoken
+from langchain.document_loaders import PyPDFLoader
 
 # Check if the password is correct.  
 if not check_password():  
@@ -39,6 +40,8 @@ def main():
     # upload file
     pdf = st.file_uploader("Upload the document for WSH regulations and input the applicants' responses.", type="pdf")
     
+    pages = pdf.load()
+
     # extract the text
     if pdf is not None:
       pdf_reader = PdfReader(pdf)
@@ -87,7 +90,7 @@ def main():
                     length_function=count_tokens
                     )
 
-                splitted_documents = text_splitter.split_documents(pdf)
+                splitted_documents = text_splitter.split_documents(pages)
 
                 embeddings_model = OpenAIEmbeddings(model='text-embedding-3-small')
                 db = Chroma.from_documents(splitted_documents, embeddings_model, persist_directory="./chroma_db")
