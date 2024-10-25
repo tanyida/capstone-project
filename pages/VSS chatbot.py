@@ -15,6 +15,20 @@ pdf_path = 'https://www.mom.gov.sg/-/media/mom/documents/safety-health/faqs-for-
 loader = PyPDFLoader(pdf_path)
 pages = loader.load_and_split()
 
+st.title("Do you require Video Surveillance System in your Construction Workplace?")
+
+st.markdown("""
+From 1 June 2024, all construction worksites with a contract value of $5 million and above are required to install VSS.
+What is VSS
+The VSS is a network of cameras, monitors or display units, and recorders used for:
+
+Surveillance
+Identification of workplace safety and health (WSH) risks
+Facilitation of incident investigation and corrective actions
+Deterrence of unsafe workplace behaviours
+""")
+
+
 # Displaying PDF processing message
 with st.spinner("Processing the document..."):
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
@@ -26,7 +40,7 @@ with st.spinner("Processing the document..."):
     retriever = faiss_index.as_retriever(search_type="similarity", search_kwargs={"k": 3})
 
     # Set up OpenAI LLM with RetrievalQA
-    llm = ChatOpenAI(model_name="gpt-4", temperature=0.2)
+    llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0.2)
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
