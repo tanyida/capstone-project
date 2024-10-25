@@ -15,17 +15,24 @@ pdf_path = 'https://www.mom.gov.sg/-/media/mom/documents/safety-health/faqs-for-
 loader = PyPDFLoader(pdf_path)
 pages = loader.load_and_split()
 
-st.title("Do you require Video Surveillance System in your Construction Workplace?")
-
 st.markdown("""
+            
+## Do you require Video Surveillance System in your Construction Workplace?
+            
 From 1 June 2024, all construction worksites with a contract value of $5 million and above are required to install VSS.
-What is VSS
+            
+### What is VSS?
 The VSS is a network of cameras, monitors or display units, and recorders used for:
+- Surveillance
+- Identification of workplace safety and health (WSH) risks
+- Facilitation of incident investigation and corrective actions
+- Deterrence of unsafe workplace behaviours
+            
+### Am I required to install VSS in my construction worksite?
+VSS is required at construction worksites with a contract value of $5 million and above.
 
-Surveillance
-Identification of workplace safety and health (WSH) risks
-Facilitation of incident investigation and corrective actions
-Deterrence of unsafe workplace behaviours
+### Still unsure or have further questions on the locations and specifications of the VSS? Type in your questions in the chatbot below!
+
 """)
 
 
