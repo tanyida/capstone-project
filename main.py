@@ -25,7 +25,16 @@ Step 1) Upload the relevant document for WSH Regulations that you wish to evalua
 Step 2) Type in the applicant's response at the right and I can help to assess if the responses are correct.
 
 """)
-    
+
+st.expander("""
+IMPORTANT NOTICE: This web application is a prototype developed for educational purposes only. The information provided here is NOT intended for real-world usage and should not be relied upon for making any decisions, especially those related to financial, legal, or healthcare matters.
+
+Furthermore, please be aware that the LLM may generate inaccurate or incorrect information. You assume full responsibility for how you use any generated output.
+
+Always consult with qualified professionals for accurate and personalized advice.
+
+""")
+
 def main():
     load_dotenv()
 
