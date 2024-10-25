@@ -11,7 +11,7 @@ st.set_page_config(page_title="VSS FAQ Chatbot", page_icon="📄")
 st.title("Video Surveillance System (VSS) FAQ Chatbot")
 
 # Load document from backend
-pdf_path = 'C:\Users\tanyi\OneDrive\Desktop\AI Champions Bootcamp\capstone project\data\faqs-for-vss.pdf'  # Update with the actual file path
+pdf_path = 'data\faqs-for-vss.pdf'  # Update with the actual file path
 loader = PyPDFLoader(pdf_path)
 pages = loader.load_and_split()
 
