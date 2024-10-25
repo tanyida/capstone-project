@@ -17,8 +17,15 @@ if not check_password():
     
 # Sidebar contents
 with st.sidebar:
-    st.title('WSHO Assessment Assistant!')
+    st.title("I am your WSHO Assessment Assistant.")
+    
+    st.markdown("""
 
+Step 1) Upload the relevant document for WSH Regulations that you wish to evaluate. 
+Step 2) Type in the applicant's response at the right and I can help to assess if the responses are correct.
+
+""")
+    
 def main():
     load_dotenv()
 
