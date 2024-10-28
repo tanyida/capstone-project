@@ -1,7 +1,5 @@
 import streamlit as st
 
- <--------- Streamlit App Configuration --------->
-
 # Set the title of the page
 st.title("Methodology")
 
