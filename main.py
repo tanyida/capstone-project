@@ -17,7 +17,7 @@ if not check_password():
     
 # Sidebar contents
 with st.sidebar:
-    st.title("I am your WSHO Assessment Assistant.")
+    st.title("I am your WSH Regulations Info Retriever Assistant.")
     
     st.markdown("""
 
@@ -39,7 +39,7 @@ def main():
     load_dotenv()
 
     #Main Content
-    st.header("Assessment assistant for Workplace Safety and Health Officer (WSHO) Applicants")
+    st.header("Assistant for Workplace Safety and Health Officer (WSHO) Applicants")
 
     # upload file
     pdf = st.file_uploader("Upload the document for WSH regulations and input the applicants' responses.", type="pdf")
@@ -67,7 +67,7 @@ def main():
       # show user input
       with st.chat_message("user"):
         st.write("Document uploaded successfuly!")
-      user_question = st.text_input("Please ask a question about your uploaded file below:")
+      user_question = st.text_input("Please ask a question below:")
       if user_question:
         docs = knowledge_base.similarity_search(user_question)
         
