@@ -39,7 +39,7 @@ def main():
     load_dotenv()
 
     #Main Content
-    st.header("Assistant for Workplace Safety and Health Officer (WSHO) Applicants")
+    st.header("Use Case 1: Assistant for Workplace Safety and Health Officer (WSHO) Applicants")
 
     # upload file
     pdf = st.file_uploader("Upload the document for WSH regulations and input the applicants' responses.", type="pdf")

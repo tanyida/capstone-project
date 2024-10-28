@@ -8,7 +8,7 @@ from langchain.document_loaders import PyPDFLoader
 
 # Set up Streamlit page
 st.set_page_config(page_title="VSS FAQ Chatbot", page_icon="📄")
-st.title("📹👀 Video Surveillance System (VSS) FAQ Chatbot 🏗🚧")
+st.title("Use Case 2: 📹👀 Video Surveillance System (VSS) FAQ Chatbot 🏗🚧")
 
 # Load document from backend
 pdf_path = 'https://www.mom.gov.sg/-/media/mom/documents/safety-health/faqs-for-vss.pdf'  # Update with the actual file path
